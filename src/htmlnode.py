@@ -29,9 +29,13 @@ class ParentNode(HTMLNode):
         super().__init__(tag=tag, value=None, children=children, props=props)
 
     def to_html(self):
-        if not self.value:
+        if not self.tag:
             raise ValueError
-        if not self.children.value:
+        if not self.children:
             raise ValueError
+        html = []
         for child in self.children:
-            return child.to_html()
+            html.append(child.to_html())
+        return "<" + self.tag + ">" + "".join(html) + "</" + self.tag + ">"
+
+
