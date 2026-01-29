@@ -1,6 +1,6 @@
 import unittest
-from textnode import TextNode, TextType
-from src.split_nodes import split_nodes_delimiter
+from src.textnode import TextNode, TextType
+from src.split_nodes import split_nodes_delimiter, split_nodes_link, split_nodes_image
 
 
 class TestSplitNodesDelimiter(unittest.TestCase):
@@ -192,6 +192,80 @@ class TestSplitNodesDelimiter(unittest.TestCase):
         ]
         self.assertEqual(new_nodes, expected)
 
+class TestSplitNodesImageSimple(unittest.TestCase):
+    def test_single_image(self):
+        node = TextNode(
+            "This is text with an ![image](https://i.imgur.com/zjjcJKZ.png)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected = [
+            TextNode("This is text with an ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, "https://i.imgur.com/zjjcJKZ.png")
+        ]
+        self.assertEqual(new_nodes, expected)
+
+    def test_image_at_beginning(self):
+        node = TextNode(
+            "![image](img.png) with text after",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected = [
+            TextNode("image", TextType.IMAGE, "img.png"),
+            TextNode(" with text after", TextType.TEXT)
+        ]
+        self.assertEqual(new_nodes, expected)
+
+    def test_image_at_end(self):
+        node = TextNode(
+            "Text before ![image](img.png)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_image([node])
+        expected = [
+            TextNode("Text before ", TextType.TEXT),
+            TextNode("image", TextType.IMAGE, "img.png")
+        ]
+        self.assertEqual(new_nodes, expected)
+
+
+class TestSplitNodesLinkSimple(unittest.TestCase):
+    def test_single_link(self):
+        node = TextNode(
+            "This is text with a [link](https://www.boot.dev)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected = [
+            TextNode("This is text with a ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "https://www.boot.dev")
+        ]
+        self.assertEqual(new_nodes, expected)
+
+    def test_link_at_beginning(self):
+        node = TextNode(
+            "[link](url.com) with text after",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected = [
+            TextNode("link", TextType.LINK, "url.com"),
+            TextNode(" with text after", TextType.TEXT)
+        ]
+        self.assertEqual(new_nodes, expected)
+
+    def test_link_at_end(self):
+        node = TextNode(
+            "Text before [link](url.com)",
+            TextType.TEXT
+        )
+        new_nodes = split_nodes_link([node])
+        expected = [
+            TextNode("Text before ", TextType.TEXT),
+            TextNode("link", TextType.LINK, "url.com")
+        ]
+        self.assertEqual(new_nodes, expected)
 
 if __name__ == "__main__":
     unittest.main()
