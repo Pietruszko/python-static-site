@@ -1,16 +1,17 @@
-from src.htmlnode import HTMLNode, LeafNode, ParentNode
-from src.textnode import TextNode, TextType
-from src.markdown_to_blocks import BlockType, block_to_block_type, markdown_to_blocks
-from src.text_to_textnodes import text_to_textnodes
-from src.text_node_to_html_node import text_node_to_html_node
+from htmlnode import HTMLNode, LeafNode, ParentNode
+from textnode import TextNode, TextType
+from markdown_to_blocks import BlockType, block_to_block_type, markdown_to_blocks
+from text_to_textnodes import text_to_textnodes
+from text_node_to_html_node import text_node_to_html_node
 
 
 def text_to_children(text):
-    """Convert inline markdown text to a list of HTML nodes."""
     text_nodes = text_to_textnodes(text)
-    html_nodes = [text_node_to_html_node(node) for node in text_nodes]
-    # Filter out LeafNodes with empty values
-    return [node for node in html_nodes if not (isinstance(node, LeafNode) and node.value == "")]
+    html_nodes = []
+    for node in text_nodes:
+        if node.text.strip():  
+            html_nodes.append(text_node_to_html_node(node))
+    return html_nodes
 
 
 def heading_block_to_html_node(block):

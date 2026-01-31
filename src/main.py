@@ -1,7 +1,7 @@
 import os
 import shutil
 from textnode import TextNode, TextType
-
+from generate_pages_recursive import generate_pages_recursive
 
 def copy_directory_contents(src, dst):
     if os.path.exists(dst):
@@ -21,7 +21,6 @@ def copy_directory_contents(src, dst):
             print(f"Copying directory: {src_path} -> {dst_path}")
             copy_directory_contents(src_path, dst_path)
 
-
 def main():
     text_node = TextNode("abc", TextType.BOLD, "www.abc.com")
     print(text_node)
@@ -29,7 +28,10 @@ def main():
     print("\nCopying static directory to public...")
     copy_directory_contents("static", "public")
     print("Copy completed!")
-
+    
+    print("\nGenerating pages recursively...")
+    generate_pages_recursive("content", "template.html", "public")
+    print("Page generation completed!")
 
 if __name__ == "__main__":
     main()
